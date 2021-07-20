@@ -273,6 +273,8 @@ app.controller('addServiceCategoryController', ["$scope", "$uibModalInstance", "
                 } catch (err) { }
 
                 var return_responce = response.data;
+                debugger
+                console.log(return_responce);
                 if (return_responce.success != false) {
                     $uibModalInstance.close();
                     cb.success('success', 'Success', return_responce.message);

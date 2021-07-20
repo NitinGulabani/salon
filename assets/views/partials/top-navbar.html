@@ -2,7 +2,7 @@
 <!-- start: NAVBAR HEADER -->
 <div class="navbar-header">
 	<!-- <a href="#" class="sidebar-mobile-toggler pull-left hidden-md hidden-lg" ng-click="toggle('sidebar')" class="btn btn-navbar sidebar-toggle"> <i class="ti-align-justify"></i> </a> -->
-	<a class="navbar-brand" ui-sref="app.pages.calender"> <img ng-src="{{app.layout.logo}}" alt="{{app.name}}"/> </a>
+	<a class="navbar-brand" ui-sref="app.pages.calender"> <img src="{{app.layout.logo}}" alt="{{app.name}}"/> </a>
 	<!-- <a href="#" class="sidebar-toggler pull-right visible-md visible-lg" ng-click="app.layout.isSidebarClosed = !app.layout.isSidebarClosed"> <i class="ti-align-justify"></i> </a> -->
 	<!-- <a class="pull-right menu-toggler visible-xs-block" id="menu-toggler" ng-click="navbarCollapsed = !navbarCollapsed"> <span class="sr-only">Toggle navigation</span> <i class="ti-view-grid"></i> </a> -->
 	</div>
@@ -25,7 +25,9 @@
 		<!-- start: USER OPTIONS DROPDOWN -->
 		<li class="dropdown current-user" uib-dropdown on-toggle="toggled(open)">
     
-			<a href class="dropdown-toggle" uib-dropdown-toggle> <img src="assets/images/avatar-1.jpg" alt="{{userdata.name}}"> <span class="username">{{userdata.name}} <i class="ti-angle-down"></i></i></span> </a>
+			<a href class="dropdown-toggle" uib-dropdown-toggle> 
+				<!-- <img src="assets/images/avatar-1.jpg" alt="{{userdata.name}}">  -->
+				<span class="username">Bhakti Patel Salon <i class="ti-angle-down"></i></i></span> </a>
 			<ul class="dropdown-menu dropdown-dark">
 				<li>
 					<a href="Javascript:void(0)" ng-click="logout()" translate="topbar.user.LOGOUT"> Log Out </a>

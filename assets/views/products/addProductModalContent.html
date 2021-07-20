@@ -21,7 +21,7 @@
                                                 Category
                                             </label>
                                             <select class="form-control" ng-model="product.category_id" name='Category'  required="">
-                                                <option selected ng-disabled="true" value="">Product Category1</option>
+                                                <option selected ng-disabled="true" value="">Product Category</option>
                                                 <option ng-selected="product.category_id == product_category.id"
                                                     ng-repeat="product_category in items.product_categories"  ng-value="product_category.id"
                                                     >{{product_category.name}}</option>
@@ -37,7 +37,17 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="block">
+                                                Product Name
+                                            </label>
+                                            <input type="text" class="form-control input-sm" id="product_name"
+                                                name="name" placeholder="Product Name" ng-model="product.name" required/>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="block">
                                                 EAN
@@ -54,26 +64,18 @@
                                             <input type="text" class="form-control input-sm" id="sku" name="sku"
                                                 placeholder="SKU" ng-model="product.sku" />
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="block">
-                                                Product Name
-                                            </label>
-                                            <input type="text" class="form-control input-sm" id="product_name"
-                                                name="name" placeholder="Product Name" ng-model="product.name" required/>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="block">
                                                 Supplier
                                             </label>
                                             <select class="form-control" name="company_id"
-                                                    ng-model="product.company_id" required="">
+                                                    ng-model="product.company_id">
                                                 <option selected ng-disabled="true" value="">Supplier</option>
                                                 <option ng-selected="product.company_id == product_company.id"
                                                     ng-repeat="product_company in items.product_companies"
@@ -107,10 +109,10 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="block">
-                                                Minimal Stock
+                                                Minimum Stock
                                             </label>
                                             <input type="number" min="0" class="form-control input-sm" name="min_stocke"
-                                                placeholder="Minimal Stock" ng-model="product.min_stocke" pattern="\d*"  />
+                                                placeholder="Minimum Stock" ng-model="product.min_stocke" pattern="\d*"  />
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +157,7 @@
                                                 placeholder="Sale Price" ng-model="product.sale_price" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" pattern="\d*" required >
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <!-- <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="block">
                                                 Tax <i class="fa  fa-inr"></i>
@@ -168,7 +170,7 @@
                                                 <option ng-selected="product.tax_id == tax.id" ng-repeat="tax in items.taxes" ng-value="tax.id"> {{tax.tax_value}} % {{tax.name}}</option>
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </fieldset>
                         </div>

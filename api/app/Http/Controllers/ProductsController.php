@@ -49,10 +49,10 @@ class ProductsController extends Middleweb_Controller
         $check_validate = $request->validate([
             'name' => ['required', 'string', 'unique:products'],
             'category_id' => 'required',
-            'company_id' => 'required',
+            // 'company_id' => 'required',
             'type' => 'required',
-            'sale_price' => 'required',
-            'tax_id' => 'required',
+            'sale_price' => 'required'
+            // 'tax_id' => 'required',
         ]);
 
         $insert_data = $request->all();
@@ -95,7 +95,7 @@ class ProductsController extends Middleweb_Controller
         $check_validate = $request->validate([
             'name' => 'required|unique:products,name,' . $request->get('id') . ',id',
             'category_id' => 'required',
-            'company_id' => 'required',
+            // 'company_id' => 'required',
             'type' => 'required',
             'sale_price' => 'required',
             'tax_id' => 'required',

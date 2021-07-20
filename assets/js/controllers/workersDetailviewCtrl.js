@@ -195,6 +195,8 @@ app.controller('workersDetailviewCtrl', ["$scope","$http","APP","notifications",
             }
         if (response.data.error == false) {
            $scope.users=response.data.data[0];
+           debugger
+           console.log($scope.users);
             if($scope.users.role==undefined){
                 $scope.users.role='';
             }

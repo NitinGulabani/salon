@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Services;
 use App\Models\ServicesCategories;
+use App\Models\Customers;
 use App\Models\Sync_cron;
 use App\Models\Tax;
 use App\Models\Appointments;
@@ -79,7 +80,7 @@ class ServicesController extends Middleweb_Controller
             'membership_price' => 'required'
         ]);
         $insert_data = $request->all();
-        
+
         $gender_value = ServicesCategories::where('id',$request->category_id)->value('gender');
         $service_category_name = ServicesCategories::where('id',$request->category_id)->value('name');
         //$insert_data['buffer_duration'] = $request->buffer_time == 1 ? $request->buffer_duration : 0;
@@ -91,7 +92,7 @@ class ServicesController extends Middleweb_Controller
         $sync_cron=Sync_cron::where('from_user_company_id',$this->ExpToken["parent_id"])->get()->toarray();
 
         if(empty($sync_cron)){
-            
+
             $insertCron=[];
             $insertCron['from_user_company_id']=$this->ExpToken["parent_id"];
             $insertCron['is_run']=1;
@@ -100,9 +101,9 @@ class ServicesController extends Middleweb_Controller
             $insertCron['created_by']=$this->ExpToken["user_id"];
             $insertCron['updated_by']=$this->ExpToken["user_id"];
             Sync_cron::create($insertCron);
-            
+
         }else {
-            
+
             $sync_cron = Sync_cron::find($sync_cron[0]['id']);
             $sync_cron->is_run = 1;
             $sync_cron->updated_at = date('Y-m-d H:i:s', strtotime('+1 minutes'));
@@ -117,9 +118,9 @@ class ServicesController extends Middleweb_Controller
             $services1->membership_price = $request->membership_price;
 
             $services1->save();
-            
+
         }
-        
+
         $response = array(
             "success" => true,
             "message" => "Service add successfully.",
@@ -127,7 +128,7 @@ class ServicesController extends Middleweb_Controller
         );
         return response()->json($response);
 
-        
+
     }
 
     public function update(Request $request)
@@ -156,7 +157,7 @@ class ServicesController extends Middleweb_Controller
         $service->created_by = $this->ExpToken["user_id"];
         $service->updated_by = $this->ExpToken["user_id"];
         $service->save();
-        $response = array( 
+        $response = array(
             "success" => true,
             "message" => "Service update successfully.",
         );
@@ -180,7 +181,7 @@ class ServicesController extends Middleweb_Controller
                 "message" => "Service delete successfully.",
             );
         }
-  
+
         return response()->json($response);
     }
 
@@ -189,7 +190,7 @@ class ServicesController extends Middleweb_Controller
     {
 
         if ($request->search_service != '') {
-            $services = Services::with('service_tax', 'service_category')->where('user_company_id', $this->ExpToken["parent_id"])->where('name', 'like', '%' . $request->search_service . '%')->orWhere('sales_price', 'like', '%' . $request->search_service . '%')->orWhere('duration', 'like', '%' . $request->search_service . '%')->get();
+            $services = Services::with('service_tax', 'service_category')->where('user_company_id', $this->ExpToken["parent_id"])->where('name', 'like', '%' . $request->search_service . '%')->orWhere('sales_price', 'like', '%' . $request->search_service . '%')->orWhere('membership_price', 'like', '%' . $request->search_service . '%')->get();
         } else {
             $services = Services::where('user_company_id', $this->ExpToken["parent_id"])->orderBy('id', 'DESC')->get();
         }

@@ -21,11 +21,11 @@
                                 <td class="center" style="height: 10px !important" ng-click="workersDetailView(a.id)"><img src="assets/images/default-user.png" class="service-provider-img-icon" alt="image"></td>
                                 <td class="hidden-xs" style="height: 10px !important" ng-click="workersDetailView(a.id)">{{a.name}} </td>
                                     <td class="hidden-xs" ng-click="workersDetailView(a.id)">{{a.email}}</td>
-                                <td ng-click="workersDetailView(a.id)" style="height: 10px !important">
+                                <!-- <td ng-click="workersDetailView(a.id)" style="height: 10px !important">
                                     <strong>{{a.role}}<span ng-if="a.auth==1"> <i class="fa fa-lock" title="Lead accountant cannot be deleted."></i></span></strong>
-                                </td>
-                                <td ng-click="workersDetailView(a.id)" style="height: 10px !important">{{a.total_services}} Services</td>
-                                <td ng-click="workersDetailView(a.id)" style="height: 10px !important">Agenda</td>
+                                </td> -->
+                                <!-- <td ng-click="workersDetailView(a.id)" style="height: 10px !important">{{a.total_services}} Services</td> -->
+                                <td ng-click="workersDetailView(a.id)" style="height: 10px !important">{{a.mobile}}</td>
                                 <td class="center" style="height: 10px !important">
                                     <a href="javascript:void(0)" title="Deatil view" ng-click="workersDetailView(a.id)" class="btn btn-sm btn-success"><i class="fa fa-eye" ng-click="workersDetailView(a.id)"></i> </a>
                                     <a href="javascript:void(0)" title="Delete worker" ng-if="a.auth==0" ng-click="deleteWorker(a.id)" class="btn btn-sm btn-danger"><i class="fa fa-remove margin-left-5"  ></i></a>

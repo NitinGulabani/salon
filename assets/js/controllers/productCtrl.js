@@ -29,7 +29,7 @@ app.controller('productCtrl', ["$scope", "$http", "SweetAlert", "modalProvider",
             var product_table_tr = '';
             angular.forEach(response.data.data, function (product, key) {
                 
-                var _type = product.type == '1' ? 'Salon' : 'Sell';
+                var _type = product.type == '1' ? 'Salon' : 'Homecare';
                 var _tax = (product.product_tax == null) ? '---' : product.product_tax.name;
                 product_table_tr +=  '<tr><td>'+ product.product_category.name+'</td><td>'+_type+'</td><td>'+product.ean+'</td><td>'+product.sku+'</td><td>'+product.name+'</td><td>'+product.purchase_price+'</td><td>'+product.sale_price+'</td><td>'+_tax+'</td><td>'+product.product_company.name+'</td><td>'+product.stocke+'</td><td>'+product.min_stocke+'</td><td>'+(product.stocke - product.min_stocke)+'</td></tr>';
 
@@ -373,9 +373,9 @@ app.controller('productCtrl', ["$scope", "$http", "SweetAlert", "modalProvider",
         DTColumnBuilder.newColumn('name').withTitle('Product Name').withOption('sName', 'name'),
         DTColumnBuilder.newColumn('category_name').withTitle('Category').withOption('sName', 'category_name'),
         DTColumnBuilder.newColumn('company_name').withTitle('Supplier').withOption('sName', 'company_name'),
-        DTColumnBuilder.newColumn('ean').withTitle('Ean').withOption('sName', 'ean'),
-        DTColumnBuilder.newColumn('sku').withTitle('SKU').withOption('sName', 'sku'),
-        DTColumnBuilder.newColumn('tax_name').withTitle('Tax').withOption('sName', 'tax_name'),
+        // DTColumnBuilder.newColumn('ean').withTitle('Ean').withOption('sName', 'ean'),
+        // DTColumnBuilder.newColumn('sku').withTitle('SKU').withOption('sName', 'sku'),
+        // DTColumnBuilder.newColumn('tax_name').withTitle('Tax').withOption('sName', 'tax_name'),
         DTColumnBuilder.newColumn('stocke').withTitle('Stock').withOption('sName', 'stocke').renderWith(stockelist),
         DTColumnBuilder.newColumn('min_stocke').withTitle('Minimum').withOption('sName', 'min_stocke'),
 
@@ -554,7 +554,7 @@ app.controller('addProductController', ["$scope", "$uibModalInstance", "$http", 
     }
     //define option
 
-    $scope.product_typeOptions = [{'id':1,'name':'Salon'},{'id':2,'name':'Sell'}];
+    $scope.product_typeOptions = [{'id':1,'name':'Salon'},{'id':2,'name':'Homecare'}];
     var php_api_link = '';
    
     $scope.submitProductForm = function () {

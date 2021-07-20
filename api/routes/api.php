@@ -262,6 +262,9 @@ Route::post('/add_coupon','CouponsController@store');
 Route::post('/update_coupon','CouponsController@update');
 Route::post('/delete_coupon','CouponsController@destroy');
 Route::get('/coupons_list','CouponsController@index');
+// Customer Coupon check Controller By H.N
+Route::get('/customer_coupon_get/{id}','MemberController@index');
+Route::get('/delete_customer_membership/{id}','MemberController@Delete_customer_membership');
 
 /*---- Coupons End -----*/
 

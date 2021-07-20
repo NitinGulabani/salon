@@ -765,9 +765,11 @@ app.controller('updateCustomerController', ["$scope", "$uibModalInstance", "$htt
         }
     }
     $scope.voucherList=function(){
+        console.log(items.data.id);
         $http.get(APP.API + 'voucher_list/'+items.data.id,
         ).then(function (response) {
            $scope.voucher_list=response.data.voucher_list;
+           console.log()
            $scope.uniqueVoucher_list = Array.from(new Set($scope.voucher_list.map(a => a.id)))
              .map(id => {
                return $scope.voucher_list.find(a => a.id === id)
@@ -777,6 +779,22 @@ app.controller('updateCustomerController', ["$scope", "$uibModalInstance", "$htt
         });
     }
     $scope.voucherList();
+
+
+    //Get Membership List
+
+    $scope.membership_list=function(){
+        // console.log(items.data.id);
+        $http.get(APP.API + 'customer_coupon_get/'+items.data.id,
+        ).then(function (response) {
+           $scope.members_list=response.data.data;
+           console.log($scope.members_list);
+           
+        }).catch(function (request, status, errorThrown) {
+
+        });
+    }
+    $scope.membership_list();
 
 
     $scope.couponList=function(){

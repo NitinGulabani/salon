@@ -27,6 +27,7 @@ class UsersController extends Middleweb_Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => ['required', 'string', 'max:255', 'unique:users'],
+            'mobile' => 'required',
             'password' => 'required'
         ]);
 
@@ -192,6 +193,7 @@ class UsersController extends Middleweb_Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'unique:users,email,' . $request->get('id') . ',id',
+            'mobile' => 'required',
             'password' => 'required'
         ]);
         $mailFlag = 0;

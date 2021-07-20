@@ -17,12 +17,12 @@ class CustomersController extends Middleweb_Controller
 
     public function index(){
 
-        
+
         $customer = Customers::where('is_active',1)->where('user_company_id',$this->ExpToken["parent_id"])->orderBy('id', 'desc')->get();
-        
+
         $response = array(
             "data" => $customer,
-           
+
         );
         return response()->json($response);
 
@@ -101,7 +101,7 @@ class CustomersController extends Middleweb_Controller
     public function destroy(Request $request)
     {
 
-        
+
         $appointment_count = Appointments::where('customer_id',$request->id)->count();
         if($appointment_count > 0){
             $response = array(
@@ -116,7 +116,7 @@ class CustomersController extends Middleweb_Controller
                 "message" => "Customer delete successfully.",
             );
         }
-        
+
         return response()->json($response);
     }
     public function archiveAll(Request $request)
@@ -164,7 +164,7 @@ class CustomersController extends Middleweb_Controller
 
     public function dt_list_customers(Request $request)
     {
-       
+
 
         $limit = $request->get('length');
         $start = $request->get('start');
@@ -398,11 +398,11 @@ class CustomersController extends Middleweb_Controller
         );
         return response()->json($response);
     }
-    
+
     public function couponList($customer_id)
     {
         $valid_coupon_list = CustomerCoupons::where('user_company_id',$this->ExpToken["parent_id"])->where('customer_id',$customer_id)->where('in_use',0)->where('to_date','>=',date('Y-m-d'))->orderBy('created_at', 'desc')->get();
-        
+
         $response = array(
             "success" => true,
             "coupon_list" => $valid_coupon_list,
@@ -411,6 +411,6 @@ class CustomersController extends Middleweb_Controller
         return response()->json($response);
 
     }
-    
+
 
 }

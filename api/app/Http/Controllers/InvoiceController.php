@@ -13,6 +13,7 @@ use App\Models\InvoiceTemplate;
 use App\Models\AppointmentLog;
 use App\Models\Common;
 use App\Models\Users;
+use App\Member;
 use App\Models\Customers;
 use App\Models\CustomerCoupons;
 use App\Models\CouponsServices;
@@ -33,13 +34,13 @@ class InvoiceController extends Middleweb_Controller
 
         $prifix = DB::select( DB::raw("SELECT * FROM prefix_master WHERE   user_company_id=".$this->ExpToken["parent_id"].""));
         $last_row = Invoice::where('user_company_id', $this->ExpToken["parent_id"])->where('invoice_prefix',substr($prifix[0]->prefix_title, 0, -1))->orderBy('invoice_no', 'DESC')->first();
-        
+
         $responce = array(
             'status' => true,
             'last_row' => $last_row,
             'prifix' => $prifix
         );
-        
+
         return response()->json($responce);
     }
 
@@ -47,8 +48,11 @@ class InvoiceController extends Middleweb_Controller
     public function store(Request $request)
     {
 
-      
+
         $table_data = $request->table_data;
+
+        
+
         $invoice_tax = $request->invoice_tax;
         $invoice = ($request->id == 0) ? new Invoice() : Invoice::find($request->id);
         $invoice->user_company_id = $this->ExpToken["parent_id"];
@@ -63,7 +67,8 @@ class InvoiceController extends Middleweb_Controller
         $invoice->invoice_no = $request->invoice_no;
         $invoice->created_by = $this->ExpToken["user_id"];
         $invoice->updated_by = $this->ExpToken["user_id"];
-        $invoice->save();
+        $resultInvoice = $invoice->save();
+
 
         if ($request->id != 0) {
             $invoice_coupon = InvoiceCoupons::where('invoice_id',$request->id)->groupBy('customer_coupon_id')->get()->toArray();
@@ -85,7 +90,7 @@ class InvoiceController extends Middleweb_Controller
             //unset($table_data[$key]['prestatie_code']);
             unset($table_data[$key]['dt_open']);
             if (isset($value['is_check'])) {
-                if ($value['is_check'] == 1) {  
+                if ($value['is_check'] == 1) {
                     $check_appointment = AppointmentLog::where('appointment_id', $value['appointment_id'])->where('appointment_status', 3)->get()->toArray();
                     if (count($check_appointment) == 0) {
                         $apppointment_log = new AppointmentLog();
@@ -111,7 +116,7 @@ class InvoiceController extends Middleweb_Controller
 
 
 
-                    if ($value['which_one'] == "coupon") {
+                    if ($value['which_one'] == "Membership") {
                         if($table_data[$key]['prestatie_code'] == ""){
                             $table_data[$key]['prestatie_code'] = "-";
                             $table_data[$key]['service_treatment_date'] = "";
@@ -125,12 +130,12 @@ class InvoiceController extends Middleweb_Controller
                             $insert_data_service['created_by'] = $this->ExpToken["user_id"];
                             $insert_data_service['updated_by'] = $this->ExpToken["user_id"];
                             $insert_data_service['where_from'] = 1; // 'cashdesk';
-                          
+
                             $coupon = Coupons::create($insert_data_service);
-                           
+
                             if ($coupon->id != 0) {
                                 foreach ($insert_data_service['services'] as $key1 => $service_value) {
-                    
+
                                     $insert_coupon_service[$key1]['coupon_id'] = $coupon->id;
                                     $insert_coupon_service[$key1]['user_company_id'] = $this->ExpToken["parent_id"];
                                     $insert_coupon_service[$key1]['service_id'] = $key1;
@@ -138,14 +143,14 @@ class InvoiceController extends Middleweb_Controller
                                     $insert_coupon_service[$key1]['where_from'] = 1; // 'cashdesk';
                                 }
                                 CouponsServices::insert($insert_coupon_service);
-                                
+
                             }
                             $value['id'] = $coupon->id;
                             unset($value['new_coupon_data']);
                         }
 
-                        
-                        
+
+
 
                         $services_for_this_coupon = CouponsServices::with('coupon_detail')->where('coupon_id', $value['id'])->get()->toArray();
 
@@ -157,23 +162,36 @@ class InvoiceController extends Middleweb_Controller
                             }else{
                                 $lastCustomerCouponId = 1;
                             }
-                            
+
                             $customer_coupons = new CustomerCoupons();
                             $customer_coupons->user_company_id = $this->ExpToken["parent_id"];
                             $customer_coupons->invoice_id = $invoice->id;
                             $customer_coupons->customer_id = isset($request->customer) ? $request->customer['id'] : 0;
                             $customer_coupons->service_id = $single_service["service_id"];
                             $customer_coupons->coupon_id = $single_service["coupon_id"];
-                            
-                            $customer_coupons->cc_number = ('CC' .$lastCustomerCouponId. $single_service["coupon_id"] . $request->customer['id'] . $invoice->id . $single_service["service_id"]);
-                            
+
+                            $customer_coupons->cc_number = ('MM' .$lastCustomerCouponId. $single_service["coupon_id"] . $request->customer['id'] . $invoice->id . $single_service["service_id"]);
+
                             $customer_coupons->no_of_services = $single_service["no_of_services"];
                             $customer_coupons->where_from = $new_coupon_or_existing_coupon;
                             $customer_coupons->from_date  = isset($value['coupon_start_date']) ? $value['coupon_start_date'] : 0;
                             $customer_coupons->to_date = isset($value['coupon_end_date']) ? $value['coupon_end_date'] : 0;
                             $customer_coupons->created_by = $this->ExpToken["user_id"];
                             $customer_coupons->updated_by = $this->ExpToken["user_id"];
-                            $customer_coupons->save();
+                            $result = $customer_coupons->save();
+
+                            
+                                $customer = Customers::find($request->customer['id']);
+                                $customer->membership_id = 'yes';
+                                $customer->save();    
+                                
+                                // $responce = array(
+                                //     'membership'=>1,
+                                //     'data' => 'This Customer Has Now Membership'
+                                // );
+
+                                // return response()->json('get');
+                                
                         }
                     }
 
@@ -184,7 +202,7 @@ class InvoiceController extends Middleweb_Controller
                     $table_data[$key]['customer_id'] = isset($request->customer) ? $request->customer['id'] : 0;
                     $table_data[$key]['appointment_id'] = $value['appointment_id'];
                     $table_data[$key]['worker_id'] = isset($value['worker_id']) ? $value['worker_id'] : 0;
-                  
+
                     $table_data[$key]['is_check'] = $value['is_check'];
                     $table_data[$key]['single_row_comment'] = isset($value['single_row_comment']) ? $value['single_row_comment'] : '';
                     if (isset($value['is_disabled'])) {
@@ -202,8 +220,8 @@ class InvoiceController extends Middleweb_Controller
 
 
                     if (isset($value['coupon']) && ($value['discount_apply'] == 3)) {
-                       
-                       
+
+
                         $coupon_id = $value['coupon']['id'];
                         $hmt_used = 0;
                         $table_invoice_coupons[$key]['user_company_id'] = $this->ExpToken["parent_id"];
@@ -237,21 +255,21 @@ class InvoiceController extends Middleweb_Controller
             }
 
         }
-        
+
         $insert_data = array_filter($table_data, function ($single_data) {
             if ($single_data["is_check"] == 1) {
                 return true;
             }
         });
-    
+
         $id_before_insert = InvoiceCoupons::select('id')->where('user_company_id', $this->ExpToken["parent_id"])->orderBy('id', 'DESC')->first();
         InvoiceData::insert($insert_data);
         InvoiceTax::insert($invoice_tax);
-        
+
         if(isset($table_invoice_coupons)){
         InvoiceCoupons::insert($table_invoice_coupons);
         }
-        
+
 
         // code change by vijay gohil 17-08-2020
         if($request->id == 0 && $id_before_insert){
@@ -268,7 +286,7 @@ class InvoiceController extends Middleweb_Controller
                $customer_coupon->save();
             }
         }
-        
+
         $new_invoice = Invoice::find($invoice->id);
         $new_invoice->is_received = 1;
         $new_invoice->is_total_amount_paid = 1;
@@ -281,6 +299,29 @@ class InvoiceController extends Middleweb_Controller
             $customer->save();
         }
         
+        
+        $customer1 = Customers::find($request->customer['id']);
+                                // $member = member::where('customer_id',$customer1->id);
+        $member = DB::select("select * from member where customer_id = ".$customer1->id);
+        if($customer1->membership_id == 1 && $request->total_invoice_amount==0)
+        {
+            if($member == NULL)
+            {
+                $member_services = new Member();
+                $member_services->customer_id = $customer1->id;
+                $member_services->coupon_id = 1;
+                $member_services->service_remaining = 5;
+                $member_services->invoice_id = $invoice->id;
+                $member_services->gender_id = $request->id;
+                $member_services->save();
+
+            }else{
+                DB::update("update member set service_remaining = service_remaining - 1 where customer_id = " . $customer1->id);
+            }
+        }
+
+
+
 
         //change status of deleted appointments from check out page
         /*$deleteServiceAppointments = $request->removedExistingServiceAppointmentIds;
@@ -291,8 +332,13 @@ class InvoiceController extends Middleweb_Controller
                 $d->save();
             }
         }*/
+        
 
+
+        
         return response()->json($invoice->id);
+        // return response()->json($responce);
+
     }
 
     public function is_received_update(Request $request)
@@ -370,8 +416,8 @@ class InvoiceController extends Middleweb_Controller
             'customer'
         ])->where('user_company_id', $this->ExpToken["parent_id"])->where('id', $invoice_id)->first();
 
-       
-        
+
+
         $customer = (empty($invoice->toArray()["customer"]) == 1) ? array() : $invoice->toArray()["customer"];
         $invioce_template = InvoiceTemplate::where('user_company_id', $this->ExpToken["parent_id"])->first();
         if (empty($invioce_template)) {
@@ -393,15 +439,15 @@ class InvoiceController extends Middleweb_Controller
         <tbody>
             <tr>
                 <td width="15%"><strong style="padding:5px;font-size:small;">Date</strong></td>
-                <td><strong style="padding:5px;font-size:small;">Item</strong></td>
                 <td><strong style="padding:5px;font-size:small;"></strong></td>
+                <td><strong style="padding:5px;font-size:small;">Item</strong></td>
                 <td><strong style="padding:5px;font-size:small;"></strong></td>
                 <td><strong style="padding:5px;font-size:small;"></strong></td>
                 <td><strong style="padding:5px;font-size:small;"></strong></td>
                 <td style="text-align:right;padding:5px;font-size: small;"><strong>Total</strong></td>
             </tr>';
         $item_details_down = '</tbody></table>';
-        
+
         foreach ($invoice->invoice_data as $single_invoice) {
             $single_service_tax = Tax::find($single_invoice["tax_id"]);
             $appointment_data = Appointments::find($single_invoice["appointment_id"]);
@@ -424,7 +470,7 @@ class InvoiceController extends Middleweb_Controller
             $discount = "";
             if($single_invoice['discount_amount'] > 0){
                 $discount="(korting : ".$single_invoice['discount_amount'].")";
-            } 
+            }
             $treatment_date_display = "-";
             if($single_invoice['service_treatment_date'] && $single_invoice['service_treatment_date'] != "0000-00-00 00:00:00"){
                 $treatment_date_display = date("d-m-Y",strtotime($single_invoice['service_treatment_date']));
@@ -450,27 +496,23 @@ class InvoiceController extends Middleweb_Controller
                 $single_tax_value = $single_service_tax->tax_value;
 
                 $single_tax_total = number_format(($single_invoice['quantity'] * $single_tax_amount), 2);
-                
-                
-                
+
+
+
                 // $item_details_middle .=  "<tr><td></td><td style='text-align: right;'>" . $single_service_tax->name . " " . $single_service_tax->tax_value .   " % ::  ₹" . number_format(($single_invoice['quantity'] * $single_tax_amount), 2)  . "</td></tr>";
             }
             if ($data_id != 0) {
                 $service_comment =  "<tr><td colspan='2' style='text-align:left;padding:5px'> <strong>Service Comment</strong> :: " . $appointment_data->comments  . "</td></tr>";
             }
         }
-       
+
         if ($invoice->comment != null) {
             $item_details_middle .=  "<tr><td colspan='2' style='text-align:left;padding:5px'> <strong>Invoice Comment</strong> :: " . $invoice->comment  . "</td></tr>";
         }
         $item_details_middle .=  isset($service_comment) ? $service_comment : '';
-        
+
         $item_details_top1 = '<br><table id="tblTax1" border="0" cellpadding="1" cellspacing="1" style="width: 30%;float: right; clear: both;margin-bottom: 10px; border-color:#ccc;" >
-        <tbody>
-            <tr>
-                <td><strong style="padding:5px;font-size:small;">BTW</strong></td>
-                <td style="text-align:right;padding:5px;font-size: small;"><strong>Amount</strong></td>
-            </tr>';
+        <tbody>';
         $item_details_down1 = '</tbody></table>';
         if ($data_id == 0) {
         foreach ($invoice->invoice_tax as $single_tax) {
@@ -487,12 +529,12 @@ class InvoiceController extends Middleweb_Controller
         $item_details_top2 = '<br><table id="tblTax" border="0" cellpadding="1" cellspacing="1" style="width: 30%;float: right; clear: both; margin-bottom: 10px; border-color:#ccc;" >
         <tbody>
             <tr>
-                <td><strong style="padding:5px;font-size:small;">Betaalmethod</strong></td>
+                <td><strong style="padding:5px;font-size:small;">Pay Method</strong></td>
                 <td style="text-align:right;padding:5px;font-size: small;"><strong>Amount</strong></td>
             </tr>';
         $item_details_down2 = '</tbody></table>';
-        
-       
+
+
         if($invoice->is_total_amount_paid == 1){
             $paymentList = Paymentmethod::leftJoin('invoice_payment', function ($join) {
                 $join->on('invoice_payment.payment_method', '=', 'payment_method.id');
@@ -512,11 +554,11 @@ class InvoiceController extends Middleweb_Controller
                     $payment_name = 'Coupon Card';
                 }
                 if ($data_id == 0) {
-                    
+
                     if($payment_method["amount"] > 0){
                         $item_details_middle2 .=  "<tr><td style='padding:5px;'><span style='padding:2px;'>" . $payment_name .   "</span></td><td style='text-align: right;padding:2px;'>₹" . $payment_method["amount"]  . "</td></tr>";
                     }
-                    
+
                 }
             }
         }else{
@@ -537,8 +579,8 @@ class InvoiceController extends Middleweb_Controller
         $item_details_down3 = '</tbody></table>';
 
         $item_details = $item_details_top . $item_details_middle . $item_details_down.$item_details_top1.$item_details_middle1.$item_details_down1.$item_details_top2.$item_details_middle2.$item_details_down2.$item_details_top3.$item_details_down3;
-        
-        
+
+
         $companyData     = Common::mailData('company_details', ['user_company_id' => $this->ExpToken["parent_id"]]);
         $company_data    = $companyData[0];
         $imageUrl        = Config::get('constants.displayImageUrl');
@@ -548,14 +590,14 @@ class InvoiceController extends Middleweb_Controller
         $company_email   = empty($companyData) ? '' : $company_data->email;
         $company_address = empty($companyData) ? '' : $company_data->address;
         $worker_details   =  empty($invoice->to_pay_id) ? [] : Users::find($invoice->to_pay_id);
-        $certificatenumber =   empty($worker_details) ? '' : 
+        $certificatenumber =   empty($worker_details) ? '' :
             implode("<br>",explode (",", $worker_details->certificate_number));
         $worker_name =   empty($worker_details) ? '' : $worker_details->name;
         $worker_email =   empty($worker_details) ? '' : $worker_details->email;
         $customer_details =  empty($invoice->customer_id) ? [] : Customers::find($invoice->customer_id);
         $customer_firstname = empty($customer_details) ? '' : $customer_details->firstname;
         $customer_lastname = empty($customer_details) ? '' : $customer_details->lastname;
-        $customer_address = empty($customer_details) ? '' : $customer_details->address."<br>".$customer_details->postal_code." ".$customer_details->city;
+        $customer_address = empty($customer_details) ? '' : $customer_details->postal_code.",".$customer_details->address."<br>".$customer_details->city;
         $customer_dob = empty($customer_details) ? '' : $customer_details->dob;
         $customer_gender = empty($customer_details) ? '' : $customer_details->gender;
         $customer_mobile = empty($customer_details) ? '' : $customer_details->mobile;

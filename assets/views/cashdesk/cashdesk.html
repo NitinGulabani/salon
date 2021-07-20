@@ -64,10 +64,8 @@
                     ng-bind-html="item.email | highlight: $select.search"></span><br> -->
                                                     <strong>mobile :</strong> <span
                                                         ng-bind-html="item.mobile | highlight: $select.search"></span><br>
-                                                    <strong>postal code :</strong> <span
-                                                        ng-bind-html="item.postal_code | highlight: $select.search"></span><br>
-                                                    <strong>dob :</strong> <span
-                                                        ng-bind-html="item.birthday | highlight: $select.search "></span>
+                                                        <strong>Membership :</strong> 
+                                                        <span ng-bind-html="item.membership_id | highlight: $select.search"></span>
                                                        
                                                 </small>
                                             </ui-select-choices>
@@ -78,22 +76,41 @@
 
                                     <!-- Select Male Service Dropdown -->
                                     
-                                    <div class="input-group margin-top-5">
+                                    <div class="input-group margin-top-5" ng-show="salesPriceVal == true">
                                         <div class="width100" ng-dropdown-multiselect="" options="services_male" selected-model="select_services_male" extra-settings="multiselectSelectSetting" translation-texts="service_male_text">
                                         </div>
                                        
    
                                         <span class="input-group-addon pointer" ng-click="clickMaleAddService()" id="basic-addon2"><i class="fa fa-plus text-large" ></i></span>
                                     </div>
-
-                                     <!-- Select female Service Dropdown -->
                                     
-                                     <div class="input-group margin-top-5">
-                                        <div class="width100" ng-dropdown-multiselect="" options="services_female" selected-model="select_services" extra-settings="multiselectSelectSetting" translation-texts="service_female_text">
+                                    <!-- Select Male Service Membership Dropdown -->
+
+                                    <div class="input-group margin-top-5" ng-show="membershipPriceVal == true">
+                                        <div class="width100" ng-dropdown-multiselect="" options="services_male_membership" selected-model="select_services_male_membership" extra-settings="multiselectSelectSetting" translation-texts="service_male_text">
                                         </div>
                                        
    
+                                        <span class="input-group-addon pointer" ng-click="clickMaleAddService1()" id="basic-addon2"><i class="fa fa-plus text-large" ></i></span>
+                                    </div>
+
+                                     <!-- Select female Service Dropdown -->
+                                    
+                                     <div class="input-group margin-top-5" ng-show="salesPriceVal == true">
+                                        <div class="width100" ng-dropdown-multiselect="" options="services_female" selected-model="select_services" extra-settings="multiselectSelectSetting" translation-texts="service_female_text">
+                                        </div>
+                                       
+                                        
                                         <span class="input-group-addon pointer" ng-click="clickAddService()" id="basic-addon2"><i class="fa fa-plus text-large" ></i></span>
+                                    </div>
+                                    <!-- Select FeMale Service Membership Dropdown -->
+
+                                    <div class="input-group margin-top-5" ng-show="membershipPriceVal == true">
+                                        <div class="width100" ng-dropdown-multiselect="" options="services_female_membership" selected-model="select_services_female_membership" extra-settings="multiselectSelectSetting" translation-texts="service_female_text">
+                                        </div>
+                                       
+   
+                                        <span class="input-group-addon pointer" ng-click="clickAddService1()" id="basic-addon2"><i class="fa fa-plus text-large" ></i></span>
                                     </div>
 
 
@@ -107,28 +124,28 @@
                                         </div>
                                         <span class="input-group-addon pointer" id="basic-addon2" ng-click="clickAddProduct()"><i class="fa fa-plus text-large"  ></i></span>
                                     </div>
-                                    <div class="btn-group  margin-top-5" uib-dropdown>
+                                    <div class="btn-group  margin-top-5" uib-dropdown ng-show = "checkMembership == true">
                                         <button type="button" class="btn btn-default btn-squared btn-lg" uib-dropdown-toggle>
                                             <i class="fa fa-plus text-large"></i>
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
-                                            <li>
+                                            <!-- <li>
                                                 <a href="#" ng-click="openServicesProductsGiftsCoupons('gifts')">
                                                     <i class="fa fa-gift"></i>&nbsp;&nbsp;&nbsp;Gifts
                                                 </a>
-                                            </li>
-                                            <li ng-if="invoice.customer != null" class="divider"></li>
+                                            </li> -->
+                                            <!-- <li ng-if="invoice.customer != null" class="divider"></li> -->
                                             <li ng-if="invoice.customer != null">
                                                 <a href="#" ng-click="openServicesProductsGiftsCoupons('coupons')">
-                                                    <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;&nbsp;Select Coupon
+                                                    <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;&nbsp;Create Membership
                                                 </a>
                                             </li>
-                                            <li ng-if="invoice.customer != null" class="divider"></li>
-                                            <li ng-if="invoice.customer != null">
+                                            <!-- <li ng-if="invoice.customer != null" class="divider"></li> -->
+                                            <!-- <li ng-if="invoice.customer != null">
                                                 <a href="#" ng-click="createCoupon()">
-                                                    <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;&nbsp;Create Coupon
+                                                    <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;&nbsp;Create Membership
                                                 </a>
-                                            </li>
+                                            </li> -->
         
                                         </ul>
                                     </div>
@@ -193,7 +210,7 @@
                                         <th>Description</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
-                                        <th style="width:15px;">Discount</th>
+                                        <!-- <th style="width:15px;">Discount</th> -->
                                         <!--<th>VAT</th>-->
                                         <!-- <th>Worker</th> -->
                                         <th>Total</th>
@@ -210,12 +227,12 @@
                                         <td width ="12%" ng-if="!single_data.prestatie_code">-</td>
                                         <td>
 
-                                            <div class="checkbox clip-check check-primary check-sm checkbox-inline">
+                                            <!-- <div class="checkbox clip-check check-primary check-sm checkbox-inline">
                                                     <input
                                                     type="checkbox" id="{{single_data.id}}_ischeck_{{$index}}"
                                                     ng-model="table_data[$index].is_check"
                                                     ng-change="changeInTableData();checkDiscount($index,single_data);"
-                                                    value="{{single_data.id}}">
+                                                    value="{{single_data.id}}"> -->
 
 
 
@@ -262,8 +279,8 @@
                                                 ng-value="single_data.calculation_sale_price">
 
                                         </td>
-                                        <td>
-                                            <!-- <button ng-disabled="single_data.is_single_row_total_paid" type="button"
+                                        <!-- <td>
+                                            <button ng-disabled="single_data.is_single_row_total_paid" type="button"
                                                 ng-if="single_data.which_one != 'gift'"
                                                 ng-click="clickOnDiscount($index,single_data)"
                                                 class="btn btn-success btn-xs"
@@ -279,7 +296,7 @@
                                                         class="fa fa-remove"></i></span>
 
 
-                                            </button> -->
+                                            </button>
 
 
 
@@ -308,11 +325,11 @@
 
                                                 </button>
 
-                                            <!-- <button type="button" ng-show="single_data.discount_apply" ng-click="removeDiscount($index,single_data)" class="btn btn-success btn-xs">
+                                            <button type="button" ng-show="single_data.discount_apply" ng-click="removeDiscount($index,single_data)" class="btn btn-success btn-xs">
                                                     Apply
-                                            </button> -->
+                                            </button>
 
-                                        </td>
+                                        </td> -->
                                         <!--<td>
                                             <select class="form-control"
                                             ng-change="changeInTableData()"
@@ -382,13 +399,13 @@
                         <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <table class="table-borderless">
-                                    <tbody>
+                                    <!-- <tbody>
                                         <tr ng-repeat="single_tax in group_by_taxs">
                                             <td class="col-md-6">Included({{single_tax.tax_value}} %)</td>
                                             <td class="col-md-6"><i class="fa fa-inr"></i>
                                                 {{single_tax.total_amount_of_this_tax}}</td>
                                         </tr>
-                                    </tbody>
+                                    </tbody> -->
                                 </table>
                             </div>
                         </div> 
@@ -406,33 +423,7 @@
                                                         class="fa fa-inr"></i>
                                                     {{total_price}}</strong></td>
                                         </tr>
-                                        <tr>
-                                            <td ><strong class="text-large"><i
-                                                        title="Amount is completed servies or purchased product."
-                                                        class="fa text-extra-small fa-question-circle pointer text-azure customIcon"></i>Received</strong>
-                                            </td>
-                                            <td ><strong class="text-large"><i
-                                                        class="fa fa-inr"></i>
-                                                    {{paid_amount}}</strong></td>
-                                        </tr>
-                                        <tr ng-if="total_coupon_amount != 0">
-                                            <td><strong class="text-large"><i
-                                                       title="Coupon applied successfully."
-                                                        class="fa text-extra-small fa-question-circle pointer text-azure customIcon"></i>Coupon discount</strong>
-                                            </td>
-                                            <td><strong class="text-large">  <i
-                                                        class="fa fa-inr"></i> 
-                                                    {{total_coupon_amount}}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong class="text-large"><i
-                                                        title="Amount is checked but not pay till now."
-                                                        class="fa text-extra-small fa-question-circle pointer text-azure customIcon"></i>Remaining</strong>
-                                            </td>
-                                            <td><strong class="text-large"><i
-                                                        class="fa fa-inr"></i>
-                                                    {{remaining_amount}}</strong></td>
-                                        </tr>
+                                        
                                         
                                     </tbody>
                                 </table>

@@ -27,7 +27,7 @@ class InvoicePaymentController extends Middleweb_Controller
             }else{
                 if ($value["method"] == 'cash') {
                     $method = 1;
-                    
+
                     $cashcounter = CashCounter::where('user_company_id',$this->ExpToken["parent_id"])->orderBy('id', 'desc')->first();
                     if(empty($cashcounter)){
                         $current_cash = 0;
@@ -41,7 +41,7 @@ class InvoicePaymentController extends Middleweb_Controller
                     $cash_counter->invoice_no = $for_invoice_no->final_invoice_no;
                     $cash_counter->status = 1;
                     $cash_counter->amount = $value["amount"];
-                    $cash_counter->current_cash = $current_cash + $value["amount"]; 
+                    $cash_counter->current_cash = $current_cash + $value["amount"];
                     $cash_counter->payment_date = date('Y-m-d H:i:s');
                     $cash_counter->note = "Cash from invoice generation";
                     $cash_counter->created_by = $this->ExpToken["user_id"];
@@ -60,6 +60,8 @@ class InvoicePaymentController extends Middleweb_Controller
                     $method = 5;
                 } else if ($value["method"] == 'coupon') {
                     $method = 6;
+                } else if ($value["method"] == 'paypal') {
+                    $method = 7;
                 }
             }
             $save_payment[$key]['user_company_id'] = $this->ExpToken["parent_id"];
@@ -95,9 +97,9 @@ class InvoicePaymentController extends Middleweb_Controller
                 $is_any_nvoice_payment = 1;
             }
         }
-      
+
         $invoice_after_payment = Invoice::where('id', $request->invoice_id)->get()->first();
-      
+
         if ($invoice_after_payment->total_invoice_amount == $paid_amount) {
             $new_invoice = Invoice::find($request->invoice_id);
             if ($is_any_nvoice_payment == 1) {

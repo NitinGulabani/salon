@@ -116,9 +116,9 @@
                     <div id="productSales">
                     <div class="row" ng-if="products.length>0">
                         <div class="table-responsive">
-                            <div class="pull-right" ng-if="displayIncludeVat">
+                            <!-- <div class="pull-right" ng-if="displayIncludeVat">
                                 Amounts are <a style="color:#004999" href="javascript:void(0)" ng-click="changeVatProduct()"> exclusive of VAT</a>
-                            </div>
+                            </div> -->
                             <div class="pull-right" ng-if="!displayIncludeVat">
                                 Amounts <a style="color:#004999" href="javascript:void(0)" ng-click="changeVatProduct()"> include VAT</a>
                             </div>
@@ -129,8 +129,8 @@
                                                 Products</span></th>
                                         <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Sale</span></th>
                                         <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Number</span></th>
-                                        <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Gem.</span></th>
-                                        <th class="col-md-1 col-sm-1 text-right"><span class="text-large">% of Total</span></th>
+                                        <!-- <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Gem.</span></th> -->
+                                        <!-- <th class="col-md-1 col-sm-1 text-right"><span class="text-large">% of Total</span></th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -148,10 +148,10 @@
                                                     <td ng-if="displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1 myCustomClass"><i class="fa fa-inr"></i>{{product.amount | number:2}} </td>
                                                     <td ng-if="!displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1 myCustomClass"><i class="fa fa-inr"></i>{{product.withouttaxAmount | number:2}} </td>
                                                     <td class="col-md-1 col-sm-1 text-right p-r-1">{{product.totalItem}}</td>
-                                                    <td ng-if="displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{product.singleAmount | number:2}}</td>
-                                                    <td ng-if="!displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{product.withoutTaxSingleAmount | number:2}}</td>
-                                                    <td ng-if="displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1">{{product.totalPer}} %</td>
-                                                    <td ng-if="!displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1">{{product.totalPerWithoutTax}} %</td>
+                                                    <!-- <td ng-if="displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{product.singleAmount | number:2}}</td> -->
+                                                    <td ng-if="!displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{product.withoutTaxSingleAmount | number:2}}</td> 
+                                                    <!-- <td ng-if="displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1">{{product.totalPer}} %</td> -->
+                                                     <td ng-if="!displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1">{{product.totalPerWithoutTax}} %</td>
                                                 </tr>
                                                 <tr ng-repeat="product in products | filter : {category_id: product_category.id}:true | limitTo:1">
                                                     <td ng-if="displayIncludeVat" class="col-md-1 col-sm-1 text-right p-r-1" style="color: #000 !important;font-weight: 600;" colspan="2"><i class="fa fa-inr"></i>{{product.totalCatAmount | number:2}}</td>
@@ -175,7 +175,7 @@
                                                 Services</span></th>
                                         <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Sale</span></th>
                                         <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Number</span></th>
-                                        <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Gem.</span></th>
+                                        <!-- <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Gem.</span></th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -192,7 +192,7 @@
                                                     <td class="col-md-2 col-sm-2"><span>{{service.name }}</span></td>
                                                     <td class="col-md-1 col-sm-1 text-right p-r-1 myCustomClass"><i class="fa fa-inr"></i>{{service.amount | number:2}} </td>
                                                     <td class="col-md-1 col-sm-1 text-right p-r-1">{{service.totalItem}}</td>
-                                                    <td class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{service.singleAmount | number:2}}</td>
+                                                    <!-- <td class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{service.singleAmount | number:2}}</td> -->
                                                 </tr>
                                             </table>
                                         </td>

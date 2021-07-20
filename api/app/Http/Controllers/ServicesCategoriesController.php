@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\ServicesCategories;
 use App\Models\Services;
 use App\Http\Controllers\Middleweb_Controller;
+use DB;
+
 
 class ServicesCategoriesController extends Middleweb_Controller
 {
@@ -80,10 +82,16 @@ class ServicesCategoriesController extends Middleweb_Controller
         $service_category->created_by = $this->ExpToken["user_id"];
         $service_category->updated_by = $this->ExpToken["user_id"];
         $service_category->save();
+
+        $service_find = Services::where('category_id',$request->id)->get();
+        DB::update("update services set gender_id = ". $request->gender. " where category_id = ".$request->id);
+
         $response = array(
             "success" => true,
             "message" => "Service category update successfully.",
+            "service" => $service_find
         );
+
         return response()->json($response);
     }
 

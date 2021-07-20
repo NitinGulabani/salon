@@ -1,7 +1,7 @@
-
+var membership_price_valid = 0;
 app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "modalProvider", "APP", "notifications", "restSessionOut", "storeAppointmentData", "$state", "displayInvoiceModal", "$timeout", function ($rootScope,$scope, $http, SweetAlert, modalProvider, APP, notifications, restSessionOut, storeAppointmentData, $state, displayInvoiceModal, $timeout) {
     console.log("$rootScope", $rootScope.clickedAppointmentId);
-
+    
     // const SERVICE_FROM_APPOINTMENT = storeAppointmentData.get();
 
     const UNPAID_INVOICE = storeAppointmentData.get();
@@ -41,6 +41,9 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
         }).catch(function (request, status, errorThrown) {
         });
     }
+    
+    var free_services = [];
+    var service_status = [];
     $scope.list_coupon = function () {
         $http.get(APP.API + 'coupons_list'
         ).then(function (response) {
@@ -51,15 +54,26 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
             } catch (err) { }
             
             // $scope.coupons = response.data.data;
+            // for(var i = 0; i<=5; i++)
+            // {
+            //     free_services[i] = response.data.data[0].services[i].id;
+            // }
+            
+            console.log(response.data.data[0].services[0].status);
+
             $scope.coupons = response.data.data.filter(function(single_coupon){
+                
                 return single_coupon.where_from == 0;
              })
+           
+           
+            
             $scope.list_tax();
         }).catch(function (request, status, errorThrown) {
         });
     }
     $scope.list_service = function () {
-        debugger
+        
         $http.get(APP.API + 'list_service'
         
         ).then(function (response) {
@@ -89,9 +103,10 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                 }else{
                     single_service.coupon = {};
                 }
+                
                 if(single_service.coupon != undefined){
                     if(single_service.coupon.cc_number != undefined){
-                        single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ") " + single_service.coupon.cc_number;
+                        single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ") ";
                     }else{
                         single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ")";
                     }
@@ -99,7 +114,7 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                     single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ")";
                 }
             })
-            debugger
+            
             $scope.services = response.data.data;
             $scope.list_coupon();
         }).catch(function (request, status, errorThrown) {
@@ -107,7 +122,80 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
     }
 
     $scope.list_service_male = function () {
-        debugger
+        
+        $http.get(APP.API + 'list_service_male'
+        
+        ).then(function (response) {
+            try {
+                if (response.data.status == "401") {
+                    restSessionOut.getRstOut();
+                }
+            } catch (err) { }
+            angular.forEach(response.data.data, function (single_service) {
+                if(UNPAID_INVOICE.customer != null ){
+                  if(UNPAID_INVOICE.customer.coupon != undefined){
+                        if(UNPAID_INVOICE.customer.coupon.length > 0){
+                            $scope.current_customer_coupon = UNPAID_INVOICE.customer.coupon.filter(function (c_cc) {
+                                if (c_cc.service_id == single_service.id) {
+                                    return true;
+                                }
+                            })
+                            if ( $scope.current_customer_coupon.length > 0) {
+                                single_service.coupon = $scope.current_customer_coupon[0];
+                            } else {
+                                single_service.coupon = {};
+                            }
+                        }
+                  }else{
+                    single_service.coupon = {};
+                  }
+                }else{
+                    single_service.coupon = {};
+                }
+                
+                        console.log(response.data.data);
+                if(single_service.coupon != undefined){
+                    
+                    if(single_service.coupon.cc_number != undefined){
+                        
+                        if(membership_price_valid == 0)
+                        {
+                            single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ") " ;
+                        }else if(membership_price_valid == 1)
+                        {
+                            single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ") " ;
+                        }
+                    }else{
+                        if(membership_price_valid == 0)
+                        {
+                            single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ") " ;
+                        }else if(membership_price_valid == 1)
+                        {
+                            single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ") " ;
+                        }                    
+                    }
+                }else{
+                    
+                        console.log(response.data.data);
+                    if(membership_price_valid == 0)
+                        {
+                            single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ") " ;
+                        }else if(membership_price_valid == 1)
+                        {
+                            single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ") " ;
+                        }  
+                }
+            })
+            
+            $scope.services_male = response.data.data;
+            console.log($scope.services_male);
+            $scope.list_coupon();
+        }).catch(function (request, status, errorThrown) {
+        });
+    }
+
+    $scope.list_service_male_membership_price = function () {
+        
         $http.get(APP.API + 'list_service_male'
         
         ).then(function (response) {
@@ -139,16 +227,17 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                 }
                 if(single_service.coupon != undefined){
                     if(single_service.coupon.cc_number != undefined){
-                        single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ") " + single_service.coupon.cc_number;
+                        
+                        single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ") " + single_service.coupon.cc_number;
                     }else{
-                        single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ")";
+                        single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ")";
                     }
                 }else{
-                    single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ")";
+                    single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ")";
                 }
             })
-            debugger
-            $scope.services_male = response.data.data;
+            
+            $scope.services_male_membership = response.data.data;
             $scope.list_coupon();
         }).catch(function (request, status, errorThrown) {
         });
@@ -156,7 +245,7 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
 
 
     $scope.list_service_female = function () {
-        debugger
+        
         $http.get(APP.API + 'list_service_female'
         
         ).then(function (response) {
@@ -196,8 +285,56 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                     single_service.label = single_service.name + "  ( ₹" + single_service.sales_price + ")";
                 }
             })
-            debugger
+            
             $scope.services_female = response.data.data;
+            $scope.list_coupon();
+        }).catch(function (request, status, errorThrown) {
+        });
+    }
+
+    $scope.list_service_female_membership_price = function () {
+        
+        $http.get(APP.API + 'list_service_female'
+        
+        ).then(function (response) {
+            try {
+                if (response.data.status == "401") {
+                    restSessionOut.getRstOut();
+                }
+            } catch (err) { }
+            angular.forEach(response.data.data, function (single_service) {
+                if(UNPAID_INVOICE.customer != null ){
+                  if(UNPAID_INVOICE.customer.coupon != undefined){
+                        if(UNPAID_INVOICE.customer.coupon.length > 0){
+                            $scope.current_customer_coupon = UNPAID_INVOICE.customer.coupon.filter(function (c_cc) {
+                                if (c_cc.service_id == single_service.id) {
+                                    return true;
+                                }
+                            })
+                            if ( $scope.current_customer_coupon.length > 0) {
+                                single_service.coupon = $scope.current_customer_coupon[0];
+                            } else {
+                                single_service.coupon = {};
+                            }
+                        }
+                  }else{
+                    single_service.coupon = {};
+                  }
+                }else{
+                    single_service.coupon = {};
+                }
+                if(single_service.coupon != undefined){
+                    if(single_service.coupon.cc_number != undefined){
+                        single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ") " + single_service.coupon.cc_number;
+                    }else{
+                        single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ")";
+                    }
+                }else{
+                    single_service.label = single_service.name + "  ( ₹" + single_service.membership_price + ")";
+                }
+            })
+            
+            $scope.services_female_membership= response.data.data;
             $scope.list_coupon();
         }).catch(function (request, status, errorThrown) {
         });
@@ -219,10 +356,14 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
             });
             $scope.service_categories = service_categories
             $scope.list_service();
-            debugger
             $scope.list_service_male();
-            debugger
+            $scope.list_service_male_membership_price();
             $scope.list_service_female();
+            $scope.list_service_female_membership_price();
+            
+            
+            
+           
         }).catch(function (request, status, errorThrown) {
         });
     }
@@ -623,7 +764,7 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
         var total_price = 0
         angular.forEach(group_by_taxs, function (group_by_tax, key) {
             if (key != 0) {
-                debugger;
+                ;
                 var _TAX = $scope.taxes.find(function (tax) { return tax.id == key });
                 var product_or_service_tax_price = 0;
                 for (var i = 0; i < group_by_tax.length; i++) {
@@ -1006,15 +1147,85 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                 },
             )
     }
+    $scope.salesPriceVal = true;
+    $scope.membershipPriceVal = false;
+    $scope.checkMembership = true;
+
+
+    
+
     $scope.onSelectCallback = function (item) {
+        
+        $scope.salesPriceVal = true;
+        $scope.membershipPriceVal = false;
+        
         if (item.id != 0) {
+            if(item.membership_id == 'yes')
+            {
+                $scope.checkMembership = false;
+                $scope.membershipPriceVal = true;
+                $scope.salesPriceVal = false;
+                
+            }
+            else{
+                $scope.membershipPriceVal = false;
+                $scope.checkMembership = true;
+                $scope.salesPriceVal = true;
+            }
+            
         $scope.invoice.customer = item;
         $scope.customer.full_name = item.firstname + " " + item.lastname;
+        var cust_id = $scope.invoice.customer.id;
+        var ToDate;
+        var CheckDate;
+        var CurrentDate;
+        
+        //Get Coupons of Customers
+        $http.get(APP.API + 'customer_coupon_get/' + cust_id
+        ).then(function (response) {
+            try {
+                if (response.data.status == "401") {
+                    restSessionOut.getRstOut();
+                }
+            } catch (err) { }
+            
+            ToDate = response.data.data[0].to_date;
+            CheckDate = new Date(ToDate);
+            CurrentDate = new Date();
+            if(CurrentDate > CheckDate)
+            {
+                // Delete Customer Coupon And Customer Membership Id
+                $http.get(APP.API + 'delete_customer_membership/' + cust_id
+                ).then(function (response) {
+                    try {
+                        if (response.data.status == "401") {
+                            restSessionOut.getRstOut();
+                        }
+                    } catch (err) { }
+                    
+                    console.log(response.data.data);
+                    notifications.Message('warning', $scope.customer.full_name,'This Customer Service Is Expired');
+                }).catch(function (request, status, errorThrown) {
+                });
+            }
+            else{
+                console.log("Byy");
+            }
+            $scope.first_worker_id = response.data.data[0].id;
+        }).catch(function (request, status, errorThrown) {
+        });
+
+        
+        
         $scope.ui_select_customer = ($scope.ui_select_customer == true) ? false : true;
+        
         }else{
             $scope.customer = item;
             $scope.ui_select_customer = ($scope.ui_select_customer == true) ? false : true;
+            
         }
+
+        
     };
     $scope.service_data_array = [];
     $scope.saveInvoice = function (which_button) {
@@ -1040,6 +1251,8 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                         }
                     } catch (err) { }
                     $scope.invoice_id = response.data;
+                    
+                    console.log(response.data);
                     if (which_button == 'to_pay') {
                         $scope.toPay();
                     } else if (which_button == 'save_invoice') {
@@ -1073,6 +1286,8 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                 }
             } catch (err) { }
             $scope.people = response.data.data;
+            
+            console.log($scope.people);
             $scope.people.push({
                 id: 0,
                 full_name: "Walk-in-customer",
@@ -1086,6 +1301,8 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
     $scope.yourFunction(null);
     $scope.select_services = [];
     $scope.select_services_male = [];
+    $scope.select_services_male_membership = [];
+    $scope.select_services_female_membership = [];
     $scope.multiselectSelectSetting = {
         checkBoxes: true,
         dynamicTitle: true,
@@ -1154,6 +1371,63 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
     }
 
 
+
+
+
+    $scope.clickAddService1 = function () {
+        if($scope.select_services_female_membership.length > 0){
+        var service_ids = $scope.select_services_female_membership.map(({ id }) => id);
+        angular.forEach(service_ids, function (id, key) {
+            $scope.services.find(function (service) {
+                if (service.id == id) {
+                    if(service.coupon != undefined){
+                        if(service.coupon.cc_number != undefined){
+                             var total_no_of_serv = 0;
+                             angular.forEach(service.coupon.coupon_detail.services,function(service_no){
+                                 total_no_of_serv += service_no.no_of_services;
+                             })
+                             $scope.total_no_of_services = total_no_of_serv;
+                             $scope.display_cashdesk_data.push({
+                                 which_one: 'service',
+                                 id: service.id,
+                                 is_check: true,
+                                 worker_id: $scope.first_worker_id,
+                                 appointment_id: 0,
+                                 name: service.name,
+                                 display_sale_price: service.membership_price,
+                                 calculation_sale_price: parseFloat((service.coupon.coupon_detail.membership_price/$scope.total_no_of_services).toFixed(2)) ,
+                                 tax_id: service.tax_id,
+                                 quantity: 1,
+                                 discount_amount: 0,
+                                 discount_percentage: 0,
+                                 data_before_discount: {},
+                                 discount_apply: 3,
+                                 single_row_total: parseFloat((service.coupon.coupon_detail.membership_price/$scope.total_no_of_services).toFixed(2)),
+                                 single_row_comment: '',
+                                 coupon: service.coupon,
+                                 coupon_start_date: service.coupon.from_date,
+                                 coupon_end_date: service.coupon.to_date,
+                                 service_treatment_date: new Date(),
+                                 prestatie_code: service.prestatie_code
+                             });
+                         }else{
+                            $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.membership_price, calculation_sale_price: service.membership_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,
+                            service_treatment_date: new Date(),prestatie_code: service.prestatie_code});
+                         }
+                    }else{
+                        $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.membership_price, calculation_sale_price: service.membership_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,service_treatment_date: new Date(),prestatie_code: service.prestatie_code});
+                    }
+                }
+            })
+        });
+        $scope.forDisplayData($scope.display_cashdesk_data.flat());
+        $scope.select_services_female_membership = [];
+    }else{
+        notifications.Message('warning', 'Service not selected', 'Select at least one service !!');
+    }
+    }
+
+
     $scope.clickMaleAddService = function () {
         if($scope.select_services_male.length > 0){
         var service_ids = $scope.select_services_male.map(({ id }) => id);
@@ -1174,7 +1448,8 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                                  worker_id: $scope.first_worker_id,
                                  appointment_id: 0,
                                  name: service.name,
-                                 display_sale_price: service.sales_price,
+                                 
+                                 display_sale_price: service.membership_price,
                                  calculation_sale_price: parseFloat((service.coupon.coupon_detail.sale_price/$scope.total_no_of_services).toFixed(2)) ,
                                  tax_id: service.tax_id,
                                  quantity: 1,
@@ -1190,18 +1465,39 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                                  service_treatment_date: new Date(),
                                  prestatie_code: service.prestatie_code
                              });
-                         }else{
-                            $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.sales_price, calculation_sale_price: service.sales_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,
+                         }
+                        {
+                            $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.membership_price, calculation_sale_price: service.sales_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,
                             service_treatment_date: new Date(),prestatie_code: service.prestatie_code});
                          }
                     }else{
-                        $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.sales_price, calculation_sale_price: service.sales_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,service_treatment_date: new Date(),prestatie_code: service.prestatie_code});
+                        $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.membership_price, calculation_sale_price: service.sales_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,service_treatment_date: new Date(),prestatie_code: service.prestatie_code});
                     }
                 }
             })
         });
         $scope.forDisplayData($scope.display_cashdesk_data.flat());
         $scope.select_services_male = [];
+    } // rakhna he
+    else{
+        notifications.Message('warning', 'Service not selected', 'Select at least one service !!');
+    }
+    }
+
+    var service_remaining;
+    $scope.clickMaleAddService1 = function () {
+        if($scope.select_services_male_membership.length > 0){
+        var service_ids = $scope.select_services_male_membership.map(({ id }) => id);        
+            angular.forEach(service_ids, function (id, key) {
+
+                $scope.services.find(function (service) {
+                    if (service.id == id) {
+                            $scope.display_cashdesk_data.push({ which_one: 'service', id: service.id, is_check: true, appointment_id: 0, name: service.name, display_sale_price: service.membership_price, calculation_sale_price: service.membership_price, tax_id: service.tax_id, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: service.sales_price, single_row_comment: '', worker_id: $scope.first_worker_id ,service_treatment_date: new Date(),prestatie_code: service.prestatie_code});                            
+                    }
+                })
+            });
+        $scope.forDisplayData($scope.display_cashdesk_data.flat());
+        $scope.select_services_male_membership = [];
     }else{
         notifications.Message('warning', 'Service not selected', 'Select at least one service !!');
     }
@@ -1459,38 +1755,38 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                         service_data_array: $scope.service_data_array,
                         to_pay_id:$scope.invoice.to_pay_id
                     }
-                    modalProvider
-                        .openPopupModal(
-                            APP.VIEW_PATH + modal_html_link,
-                            modal_controller,
-                            modal_size,
-                            $scope.data_inside_modal,
-                            {
-                                'success': function (state, title, msg) {
-                                    if (state == 'success') {
-                                        if (msg != 'closed') {
-                                            var APPOINTMENTS = msg;
-                                            angular.forEach($scope.table_data, function (single_data) {
+                    // modalProvider
+                        // .openPopupModal(
+                        //     APP.VIEW_PATH + modal_html_link,
+                        //     modal_controller,
+                        //     modal_size,
+                        //     $scope.data_inside_modal,
+                        //     {
+                        //         'success': function (state, title, msg) {
+                        //             if (state == 'success') {
+                        //                 if (msg != 'closed') {
+                        //                     var APPOINTMENTS = msg;
+                        //                     angular.forEach($scope.table_data, function (single_data) {
 
-                                                if (single_data.which_one == "service" && single_data.appointment_id == 0) {
-                                                    APPOINTMENTS.find(function (appointment) {
-                                                        if (appointment.service_id == single_data.id) {
-                                                            single_data.appointment_id = appointment.id
-                                                        }
-                                                    });
-                                                }
-                                                APPOINTMENTS = APPOINTMENTS.filter(function(appointment)   {
-                                                    return single_data.appointment_id != appointment.id;
-                                                  });
-                                            })
+                        //                         if (single_data.which_one == "service" && single_data.appointment_id == 0) {
+                        //                             APPOINTMENTS.find(function (appointment) {
+                        //                                 if (appointment.service_id == single_data.id) {
+                        //                                     single_data.appointment_id = appointment.id
+                        //                                 }
+                        //                             });
+                        //                         }
+                        //                         APPOINTMENTS = APPOINTMENTS.filter(function(appointment)   {
+                        //                             return single_data.appointment_id != appointment.id;
+                        //                           });
+                        //                     })
                                             $scope.sendToSaveInvoice();
-                                        }else{
-                                            $scope.sendToSaveInvoice();
-                                        }
-                                    }
-                                }
-                            },
-                        )
+                        //                 }else{
+                        //                     $scope.sendToSaveInvoice();
+                        //                 }
+                        //             }
+                        //         }
+                        //     },
+                        // )
                 }else{
                      $scope.sendToSaveInvoice();
                 }
@@ -1811,15 +2107,17 @@ app.controller('showServicesInCashDeskCtrl', ["$scope", "$uibModalInstance", "$h
                 $uibModalInstance.close();
                 break;
             case 'coupons':
-                if ($scope.checked_coupon_data == undefined) {
-                    notifications.Message('error', 'Error', 'Select coupon code !!');
-                    return false;
-                }
+                // if ($scope.checked_coupon_data == undefined) {
+                //     notifications.Message('error', 'Error', 'Select coupon code !!');
+                //     return false;
+                // }
                 if ($scope.entrance_date.date == null || $scope.entrance_date.date == '') {
                     notifications.Message('error', 'Error', 'Choose entrance date !!');
                     return false;
                 }
-                var coupon_card = { which_one: 'coupon', id: $scope.checked_coupon_data.id, is_check: true, appointment_id: 0, name: $scope.checked_coupon_data.description, display_sale_price: $scope.checked_coupon_data.sale_price, calculation_sale_price: $scope.checked_coupon_data.sale_price, tax_id: 0, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: $scope.checked_coupon_data.sale_price, single_row_comment: '', worker_id: items.first_worker_id,coupon_start_date:   moment($scope.entrance_date.date).format('YYYY-MM-DD'),coupon_end_date: moment($scope.end_date).format('YYYY-MM-DD')}
+                var coupon_card = { which_one: 'Membership', id: $scope.checked_coupon_data.id, is_check: true, appointment_id: 0, name:"Membership", display_sale_price: $scope.checked_coupon_data.sale_price, calculation_sale_price: $scope.checked_coupon_data.sale_price, tax_id: 0, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: $scope.checked_coupon_data.sale_price, single_row_comment: '', worker_id: items.first_worker_id,coupon_start_date:   moment($scope.entrance_date.date).format('YYYY-MM-DD'),coupon_end_date: moment($scope.end_date).format('YYYY-MM-DD')}
+                
+                console.log($scope.checked_coupon_data.id);
                 cb.success('coupon_card_certificate', 'coupon', coupon_card);
                 $uibModalInstance.close();
                 break;
@@ -1863,7 +2161,13 @@ app.controller('showServicesInCashDeskCtrl', ["$scope", "$uibModalInstance", "$h
     $scope.cancel = function () {
         $uibModalInstance.close();
     };
-    $scope.entrance_date = { date: '' }
+    
+    var a = new Date();
+    
+    $scope.entrance_date = { date: a };
+    var end_date = moment($scope.entrance_date.date, 'DD-MM-YYYY').add('month', 12);
+    $scope.end_date = end_date._d;
+
     $scope.dateChanged = function () {
         var check1 = moment(moment($scope.entrance_date.date, 'DD-MM-YYYY').format('YYYY-MM-DD')).isBefore(moment(new Date(), 'DD-MM-YYYY').format('YYYY-MM-DD'));
         if(check1){
@@ -2753,7 +3057,7 @@ app.controller('createCouponCtrl', ["$scope", "$uibModalInstance", "$http", "ite
         }
        
 
-        var coupon_card = { which_one: 'coupon', id: 0, is_check: true, appointment_id: 0, name: $scope.coupon.description, display_sale_price: parseFloat($scope.coupon.sale_price), calculation_sale_price: parseFloat($scope.coupon.sale_price), tax_id: 0, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: $scope.coupon.sale_price, single_row_comment: '', worker_id: items.first_worker_id,coupon_start_date: moment($scope.entrance_date.date).format('YYYY-MM-DD'),coupon_end_date: moment($scope.end_date).format('YYYY-MM-DD'),new_coupon_data:$scope.coupon}
+        var coupon_card = { which_one: 'Membership', id: 0, is_check: true, appointment_id: 0, name: $scope.coupon.description, display_sale_price: parseFloat($scope.coupon.sale_price), calculation_sale_price: parseFloat($scope.coupon.sale_price), tax_id: 0, quantity: 1, discount_amount: 0, discount_percentage: 0, data_before_discount: {}, discount_apply: 0, single_row_total: $scope.coupon.sale_price, single_row_comment: '', worker_id: items.first_worker_id,coupon_start_date: moment($scope.entrance_date.date).format('YYYY-MM-DD'),coupon_end_date: moment($scope.end_date).format('YYYY-MM-DD'),new_coupon_data:$scope.coupon}
         
        // console.log('coupon_card',coupon_card);
         cb.success('coupon_card_certificate', 'coupon', coupon_card);

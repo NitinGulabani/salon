@@ -87,9 +87,8 @@
                                             <tr>
                                                 <th class="col-md-2 col-sm-2"><span class="text-large"><i class="fa fa-folder-open-o padding-right-10"></i>
                                                 Description</span></th>
-                                                <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Duration</span></th>
                                                 <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Sale</span></th>
-                                                <th class="col-md-1 col-sm-1 text-right"><span class="text-large">BTW</span></th>
+                                                <th class="col-md-1 col-sm-1 text-right"><span class="text-large">Membership</span></th>
                                                 <th class="col-md-1 col-sm-1 text-center"></th>
                                             </tr>
                                         </thead>
@@ -97,9 +96,8 @@
 
                                             <tr ng-repeat="service in searched_services | filter : {category_id: service_category.id}">
                                                 <td class="col-md-2 col-sm-2"><span>{{service.name}}</span></td>
-                                                <td class="col-md-1 col-sm-1 text-right p-r-1">{{service.duration | rightTime}}</td>
                                                 <td class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{service.sales_price}}</td>
-                                                <td class="col-md-1 col-sm-1 text-right p-r-1">{{service.service_tax.tax_value}}%</td>
+                                                <td class="col-md-1 col-sm-1 text-right p-r-1"><i class="fa fa-inr"></i>{{service.membership_price}}</td>
 
                                                 <td class="col-md-1 col-sm-1 text-center"><a ng-click="add_editService(service)"><i
                                                     class="fa fa-edit text-azure"></i></a>

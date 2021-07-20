@@ -5,6 +5,8 @@
 
  app.controller('couponUsedCtrl', ["$scope", "$http", "APP", "restSessionOut", "DTOptionsBuilder", "DTColumnBuilder", "$compile", function ($scope, $http,  APP,  restSessionOut, DTOptionsBuilder, DTColumnBuilder, $compile) {
 
+    
+    
     $("#ui-datepicker-div").hide();
     var auth_token = localStorage.getItem('auth_token');
     $http.defaults.headers.common.authtoken = auth_token;
@@ -84,11 +86,10 @@
     $scope.dtColumnInvoiceRequest_main = [
         DTColumnBuilder.newColumn('created_at').withTitle('Sale Date').withOption('sName', 'created_at').renderWith(saleDateHtml),
         DTColumnBuilder.newColumn('cc_number').withTitle('Number').withOption('sName', 'cc_number').renderWith(cc_numberHtml),
-        DTColumnBuilder.newColumn('description').withTitle('Coupon').withOption('sName', 'coupon_detail').renderWith(coupon_detailHtml),
+        DTColumnBuilder.newColumn('description').withTitle('Membership').withOption('sName', 'coupon_detail').renderWith(coupon_detailHtml),
         DTColumnBuilder.newColumn('full_name').withTitle('Customer').withOption('sName', 'customer').renderWith(customerHtml),
         DTColumnBuilder.newColumn('from_date').withTitle('Start').withOption('sName', 'from_date').renderWith(start_dateHtml),
         DTColumnBuilder.newColumn('to_date').withTitle('End').withOption('sName', 'to_date').renderWith(end_dateHtml),
-        DTColumnBuilder.newColumn('hmt_used').withTitle('Use %').withOption('sName', 'hmt_used').renderWith(useHtml),
     ];
     $scope.dtColumnInvoiceRequestDefs_main = [];
     function createdRow(row, data, dataIndex) {
@@ -112,6 +113,9 @@
          return data;
     }
     function customerHtml(data, type, full, meta) {
+        return data;
+    }
+    function invoiceHtml(data, type, full, meta) {
         return data;
     }
     function start_dateHtml(data, type, full, meta) {
