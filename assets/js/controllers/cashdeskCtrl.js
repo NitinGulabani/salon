@@ -755,6 +755,7 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
         $scope.changeInTableData();
     }
     $scope.changeInTableData = function () {
+        debugger
         $scope.total_coupon_amount = 0;
         var total_invoice_amount = 0;
         var paid_amount = 0;
@@ -769,97 +770,39 @@ app.controller('cashdeskCtrl', ["$rootScope","$scope", "$http", "SweetAlert", "m
                 var product_or_service_tax_price = 0;
                 for (var i = 0; i < group_by_tax.length; i++) {
                     if (group_by_tax[i].is_check) {
-                        if (group_by_tax[i].discount_amount != 0) {
-                            if(group_by_tax[i].discount_apply != 3){
-                                
-                                if(group_by_tax[i].which_one == 'product'){
-                                    if(group_by_tax[i].quantity > group_by_tax[i].stock ){
-                                     group_by_tax[i].quantity = 1;
-                                     group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
-                                     notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
-                                    }else{
-                                        group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
-                                    }
-                                }else{
-                                    group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
-                                }
-
-                            }else{
-                           
-                                group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price) * group_by_tax[i].quantity;
-                           
-                            }
-                        } else if (group_by_tax[i].discount_percentage != 0) {
-                            
-                            if(group_by_tax[i].which_one == 'product'){
-                                if(group_by_tax[i].quantity > group_by_tax[i].stock ){
-                                 group_by_tax[i].quantity = 1;
-                                 group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price - (group_by_tax[i].calculation_sale_price * (group_by_tax[i].discount_percentage / 100)))* group_by_tax[i].quantity;
-                                 notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
-                                }else{
-                                    group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price - (group_by_tax[i].calculation_sale_price * (group_by_tax[i].discount_percentage / 100)))* group_by_tax[i].quantity;
-                                }
-                            }else{
-                                group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price - (group_by_tax[i].calculation_sale_price * (group_by_tax[i].discount_percentage / 100)))* group_by_tax[i].quantity;
-                            }
                         
-                        } else {
 
-                           if(group_by_tax[i].which_one == 'product'){
-                               if(group_by_tax[i].quantity > group_by_tax[i].stock ){
-                                group_by_tax[i].quantity = 1;
-                                group_by_tax[i].single_row_total = group_by_tax[i].calculation_sale_price * group_by_tax[i].quantity;
-                                notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
-                               }else{
-                                group_by_tax[i].single_row_total = group_by_tax[i].calculation_sale_price * group_by_tax[i].quantity;
-                               }
-                           }else{
-                            group_by_tax[i].single_row_total = group_by_tax[i].calculation_sale_price * group_by_tax[i].quantity;
-                           }
-
+                        if(group_by_tax[i].which_one == 'product'){
+                            console.log(group_by_tax[i].quantity);
+                            if(group_by_tax[i].quantity > group_by_tax[i].stock ){
+                             group_by_tax[i].quantity = group_by_tax[i].stock;
+                             group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
+                             notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
+                            }else{
+                                group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
+                            }
+                        }else{
+                            group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
                         }
-                        var product_or_service_price_with_tax = group_by_tax[i].single_row_total;
-                        var product_or_service_price_actual_price = (product_or_service_price_with_tax / (1 + (_TAX.tax_value / 100)));
-                        product_or_service_tax_price += (product_or_service_price_with_tax - product_or_service_price_actual_price)
-                        total_price += group_by_tax[i].single_row_total;
+       
                     }
                 }
                 $scope.group_by_taxs.push({ taxid: key, total_amount_of_this_tax: product_or_service_tax_price.toFixed(2), tax_value: _TAX.tax_value });
             } else {
                 for (var i = 0; i < group_by_tax.length; i++) {
                     if (group_by_tax[i].is_check) {
-                        if (group_by_tax[i].discount_amount != 0) {
-                            if(group_by_tax[i].discount_apply != 3){
-                                if(group_by_tax[i].which_one == 'product'){
-                                    if(group_by_tax[i].quantity > group_by_tax[i].stock ){
-                                     group_by_tax[i].quantity = 1;
-                                     group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price* group_by_tax[i].quantity - group_by_tax[i].discount_amount) ;
-                                     notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
-                                    }else{
-                                        group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price* group_by_tax[i].quantity - group_by_tax[i].discount_amount) ;
-                                    }
-                                }else{
-                                    group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price* group_by_tax[i].quantity - group_by_tax[i].discount_amount) ;
-                                }
+                        
+                        if(group_by_tax[i].which_one == 'product'){
+                            console.log(group_by_tax[i].quantity);
+                            if(group_by_tax[i].quantity > group_by_tax[i].stock ){
+                             group_by_tax[i].quantity = group_by_tax[i].stock;
+                             group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
+                             notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
                             }else{
-                                group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price) * group_by_tax[i].quantity;
+                                group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
                             }
-                        } else if (group_by_tax[i].discount_percentage != 0) {
-                            
-                            if(group_by_tax[i].which_one == 'product'){
-                                if(group_by_tax[i].quantity > group_by_tax[i].stock ){
-                                 group_by_tax[i].quantity = 1;
-                                 group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price - (group_by_tax[i].calculation_sale_price * (group_by_tax[i].discount_percentage / 100)))* group_by_tax[i].quantity;
-                                 notifications.Message('warning', 'Quantity is heigher than stock', 'Availabe stock is '+group_by_tax[i].stock+' !!');
-                                }else{
-                                    group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price - (group_by_tax[i].calculation_sale_price * (group_by_tax[i].discount_percentage / 100)))* group_by_tax[i].quantity;
-                                }
-                            }else{
-                                group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price - (group_by_tax[i].calculation_sale_price * (group_by_tax[i].discount_percentage / 100)))* group_by_tax[i].quantity;
-                            }
-
-                        } else {
-                            group_by_tax[i].single_row_total = group_by_tax[i].calculation_sale_price * group_by_tax[i].quantity;
+                        }else{
+                            group_by_tax[i].single_row_total = (group_by_tax[i].calculation_sale_price*group_by_tax[i].quantity - group_by_tax[i].discount_amount);
                         }
                         total_price += group_by_tax[i].single_row_total;
                     }

@@ -415,13 +415,18 @@ class ProductsController extends Middleweb_Controller
     }
     public function deduct_product_quantity(Request $request)
     {   
-        
         $productData = $request->all();
         foreach ($productData as $key => $value) {
            
             $pro = DB::table('products')->where('id',$value['id'])->first();
+            
             $newStock = number_format($pro->stocke) - number_format($value['quantity']);
-            DB::table('products')->where('id', $pro->id)->update(['stocke' => $newStock]);
+            if($newStock <= 0)
+            {
+                DB::table('products')->where('id', $pro->id)->update(['stocke' => 0]);
+            }else{
+                DB::table('products')->where('id', $pro->id)->update(['stocke' => $newStock]);
+            }
         }
         $response = array(
             'success' => true,
