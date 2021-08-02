@@ -438,13 +438,9 @@ class InvoiceController extends Middleweb_Controller
         $item_details_top = '<table id="invoiceMdlTbl"  border="0" cellpadding="1" cellspacing="1" style="width: 100%;">
         <tbody>
             <tr>
-                <td width="15%"><strong style="padding:5px;font-size:small;">Date</strong></td>
-                <td><strong style="padding:5px;font-size:small;"></strong></td>
-                <td><strong style="padding:5px;font-size:small;">Item</strong></td>
-                <td><strong style="padding:5px;font-size:small;"></strong></td>
-                <td><strong style="padding:5px;font-size:small;"></strong></td>
-                <td><strong style="padding:5px;font-size:small;"></strong></td>
-                <td style="text-align:right;padding:5px;font-size: small;"><strong>Total</strong></td>
+                <td><strong style="padding:5px;font-size:10px;">Date</strong></td>
+                <td><strong style="padding:5px;font-size:10px;">Item</strong></td>
+                <td style="text-align:center;padding:5px;font-size: 10px;"><strong>Total</strong></td>
             </tr>';
         $item_details_down = '</tbody></table>';
 
@@ -478,14 +474,9 @@ class InvoiceController extends Middleweb_Controller
             //<td style='padding:5px;'>" . $single_invoice['discount_amount'] . "</td>
             $item_details_middle .=  "
                 <tr>
-                    <td style='padding:5px;'>".$treatment_date_display."</td>
-                    <td style='padding:5px;'>".$prestatie_code."</td>
-                    <td style='padding:5px;'>".$single_invoice['quantity']." x ".$single_invoice['description'].$single_row_comment." ".$discount."</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style='text-align: right;'>₹" . $item_total_price . "</td>
+                    <td style='padding:5px;font-size:10px;'>".$treatment_date_display."</td>
+                    <td style='padding:5px;font-size:10px;'>".$single_invoice['quantity']." x ".$single_invoice['description'].$single_row_comment." ".$discount."</td>
+                    <td style='text-align: center;font-size:10px;'>₹" . $item_total_price . "</td>
                 </tr>";
             if ($data_id != 0) {
 
@@ -529,8 +520,8 @@ class InvoiceController extends Middleweb_Controller
         $item_details_top2 = '<br><table id="tblTax" border="0" cellpadding="1" cellspacing="1" style="width: 30%;float: right; clear: both; margin-bottom: 10px; border-color:#ccc;" >
         <tbody>
             <tr>
-                <td><strong style="padding:5px;font-size:small;">Pay Method</strong></td>
-                <td style="text-align:right;padding:5px;font-size: small;"><strong>Amount</strong></td>
+                <td><strong style="padding:5px;font-size:10px;">Pay Method</strong></td>
+                <td style="text-align:right;padding:5px;font-size: 10px;"><strong>Amount</strong></td>
             </tr>';
         $item_details_down2 = '</tbody></table>';
 
@@ -556,7 +547,7 @@ class InvoiceController extends Middleweb_Controller
                 if ($data_id == 0) {
 
                     if($payment_method["amount"] > 0){
-                        $item_details_middle2 .=  "<tr><td style='padding:5px;'><span style='padding:2px;'>" . $payment_name .   "</span></td><td style='text-align: right;padding:2px;'>₹" . $payment_method["amount"]  . "</td></tr>";
+                        $item_details_middle2 .=  "<tr><td style='padding:5px;'><span style='padding:2px;font-size:10px;'>" . $payment_name .   "</span></td><td style='text-align: right;font-size:10px;padding:2px;'>₹" . $payment_method["amount"]  . "</td></tr>";
                     }
 
                 }
@@ -573,8 +564,8 @@ class InvoiceController extends Middleweb_Controller
         $item_details_top3 = '<br><table  border="0" cellpadding="1" cellspacing="1" style="width: 30%;float:right; clear: both;margin-bottom: 10px; border-color:#ccc;" >
         <tbody>
             <tr>
-                <td><strong style="padding:5px;font-size:small;">Total Amount</strong></td>
-                <td style="text-align:right;padding:5px;font-size: small;"><strong>₹'.$total_amount.'</strong></td>
+                <td><strong style="padding:5px;font-size:10px;">Total Amount</strong></td>
+                <td style="text-align:right;padding:5px;font-size: 10px;"><strong>₹'.$total_amount.'</strong></td>
             </tr>';
         $item_details_down3 = '</tbody></table>';
 
