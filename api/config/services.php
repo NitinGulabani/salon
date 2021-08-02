@@ -44,9 +44,9 @@ return [
         ],
     ],
     'google' => [
-        'client_id' => '967454501547-5ppgtuckjjm89grbe76o3uo295m5toko.apps.googleusercontent.com',
-        'client_secret' => 'GB9s5MNdVR4-Vq0HLLpZPVSK',
-        'redirect' => 'https://salon.kanhasoftdev.com',
+        'client_id' => '',
+        'client_secret' => '',
+        'redirect' => '',
     ]
 
 ];

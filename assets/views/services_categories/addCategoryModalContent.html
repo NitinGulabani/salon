@@ -14,15 +14,6 @@
                                 
                         <input type="text" name="name" class="form-control input-sm" ng-model="service_category.name" placeholder="Category Name" required />
                     </div>
-                   
-                   
-                    <div class="form-group">
-                        <select class="cs-select cs-skin-elastic" name="type" ng-model="service_category.type" required>
-                            <option selected ng-disabled="true" value="" >Type</option>    
-                            <option ng-selected="type == cat_type.id" ng-repeat="cat_type in cat_types" ng-value="cat_type.id">{{cat_type.label}}</option>
-                        </select>
-                        
-                    </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -55,19 +46,11 @@
                             <label for="female">
                                 Female
                             </label>
-                            <input type="radio" id="other" name="gender" value="0" ng-model="service_category.gender"
-                                required />
-                            <label for="other">
-                                Other
-                            </label>
+                           
                         </div>
                         <span class="error" ng-show = "gender_validation">{{gender_validation_message}}</span>
                     </div>
 
-                    <div class="form-group">
-                        <!-- string-to-number directive coming from directive/compare-to.js -->
-                        <input type="number" name="no_of_appointment" class="form-control input-sm" string-to-number ng-model="service_category.no_of_appointment" min="0" placeholder="No of appointment" pattern="\d*" required/>
-                    </div>
                 </div>
             </div>
         </div>

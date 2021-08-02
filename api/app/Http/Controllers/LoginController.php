@@ -100,8 +100,8 @@ class LoginController extends Controller {
     //         $curlPost['start'] = array('dateTime' => '2020-02-28T16:46:00', 'timeZone' => "America/Toronto");
     //         $curlPost['end'] = array('dateTime' => '2020-02-29T16:47:00', 'timeZone' => "America/Toronto");
     //         $curlPost['attendees'] = array(
-    //             array('email' => 'vijayg.kanhasoft@gmail.com'),
-    //             array('email' => 'nehalm.kanhasoft@gmail.com'),
+    //             array('email' => 'vijayg.@gmail.com'),
+    //             array('email' => ''),
     //         );
     //         $ch = curl_init();		
     //         curl_setopt($ch, CURLOPT_URL, $url_events);		

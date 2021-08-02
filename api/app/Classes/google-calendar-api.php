@@ -73,10 +73,7 @@ class GoogleCalendarApi
 			$curlPost['start'] = array('dateTime' => $event_time['start_time'], 'timeZone' => $event_timezone);
 			$curlPost['end'] = array('dateTime' => $event_time['end_time'], 'timeZone' => $event_timezone);
 		}
-		/* $curlPost['attendees'] = array(
-			array('email' => 'vijayg.kanhasoft@gmail.com'),
-			array('email' => 'niranjan.kanhasoft@gmail.com'),
-		); */
+		
 		$ch = curl_init();		
 		curl_setopt($ch, CURLOPT_URL, $url_events);		
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);		

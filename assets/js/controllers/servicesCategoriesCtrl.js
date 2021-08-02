@@ -175,7 +175,6 @@ app.controller('servicesCategoriesCtrl', ["$scope", "SweetAlert", 'DTOptionsBuil
         DTColumnBuilder.newColumn('name').withTitle('Type').renderWith(typeHtml),
         DTColumnBuilder.newColumn('name').withTitle('Color').renderWith(colorHtml),
         DTColumnBuilder.newColumn('gender').withTitle('Gender').renderWith(genderHtml),
-        DTColumnBuilder.newColumn('no_of_appointment').withTitle('No of appointment'),
         DTColumnBuilder.newColumn('id').withTitle("Action").withOption('sName', 'id').renderWith(actionList)
     ];
     $scope.dtColumnInvoiceRequestDefs = [

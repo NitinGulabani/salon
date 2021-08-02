@@ -40,10 +40,7 @@ class ServicesCategoriesController extends Middleweb_Controller
             
             'name' => ['required', 'string'],
             'color' => ['required', 'string'],
-            'type' => 'required',
             'gender' => 'required',
-            'no_of_appointment' => 'required',
-
         ]);
         $service_category = new ServicesCategories();
         $service_category->name = $request->name;

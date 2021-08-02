@@ -427,7 +427,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$controllerProvider', '$com
                     }).then(function (response) {
                         var msgArr = {'error':response.data.error,'message':response.data.message}
                         localStorage.setItem('google_sync_msg', JSON.stringify(msgArr));
-                        window.location.href= 'https://salon.kanhasoftdev.com/#!/app/pages/management/service_provider';
+                        window.location.href= '';
                     //toaster.pop('success', 'Success',response.data.message);
                     });
                 }
